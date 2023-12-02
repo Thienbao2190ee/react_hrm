@@ -3,7 +3,7 @@ import "../util.css";
 import { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../redux/slice/authSlice";
 import { ToastContainer, toast } from "react-toastify";
@@ -17,6 +17,8 @@ const formSchema = Yup.object({
 function Login() {
 
   const dispatch = useDispatch();
+
+  const navigate = useNavigate()
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -48,12 +50,9 @@ function Login() {
         email : formik.values.email,
         password: formik.values.password
       }
-      console.log('gũi',data);
       const action = await dispatch(loginAction(data))
 
       const status = loginAction.fulfilled.match(action);
-
-      console.log(action);
 
       toast[status ? "success" : "error"](action.payload.msg, {
         position: "top-right",
@@ -65,6 +64,13 @@ function Login() {
         progress: undefined,
         theme: "light",
       });
+
+      if(status){
+        setTimeout(()=> {
+        navigate('/home')
+        },1000)
+      }
+
 
 
 
@@ -102,7 +108,7 @@ function Login() {
               >
                 <input
                   className="input100"
-                  type="text"
+                  type="gmail"
                   placeholder="Email"
                   name="email"
                   value={formik.values.email}

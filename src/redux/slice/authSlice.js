@@ -81,6 +81,21 @@ export const checkCodeAction = createAsyncThunk(`${moduleName}/checkCode`, async
     }
 });
 
+//get all data, search, paging
+export const logoutAction = createAsyncThunk(`${moduleName}/logout`, async (data, { rejectWithValue }) => {
+    try {
+        // call Api
+            document.cookie = 'refreshToken' + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = 'userInfo' + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = 'userId' + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    } catch (error) {
+        if (!error.response) {
+            throw error;
+        }
+        return rejectWithValue(error?.response?.data);
+    }
+});
+
 
 const authSlices = createSlice({
     name: 'auth',
