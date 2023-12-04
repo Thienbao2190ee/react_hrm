@@ -1,12 +1,11 @@
 import "../main.css";
 import "../util.css";
-import { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../redux/slice/authSlice";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { regexEmail } from "../until/regex";
 
 const formSchema = Yup.object({
@@ -67,7 +66,7 @@ function Login() {
 
       if(status){
         setTimeout(()=> {
-        navigate('/home')
+        navigate('/hrm')
         },1000)
       }
 
@@ -81,18 +80,7 @@ function Login() {
   }
   return (
     <div className="w-full h-screen flex items-center justify-center">
-    <ToastContainer
-        position="bottom-right"
-        autoClose={1500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+    
       <div className="limiter">
         <div className="container-login100">
           <div className="wrap-login100">

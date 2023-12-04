@@ -2,13 +2,14 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./compoment/Layout";
-import Home from "./page/Home";
+// import Home from "./page/Home";
 import Login from "./page/Login";
 
 import CheckCode from "./page/CheckCode";
 import Register from "./page/Register";
 import { useEffect, useState } from "react";
 import PrivateProtectedRoute from "./until/ProtectedRoutes/PrivateProtectedRoutes";
+import Hrm from "./page/hrm/Hrm";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -39,7 +40,8 @@ function App() {
             <Route path="/check-code" element={<CheckCode />} />
           <Route element={<PrivateProtectedRoute />} >
             <Route path="/" element={<Layout />}>
-              <Route index path="/home" element={<Home />} />
+              <Route index path="/Hrm" element={<Hrm />} />
+              
             </Route>
           </Route>
         </Routes>

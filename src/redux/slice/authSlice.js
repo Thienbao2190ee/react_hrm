@@ -3,7 +3,7 @@ import authAPi from '../../api/authApi';
 
 const moduleName = 'auth';
 
-//get all data, search, paging
+
 export const registerAction = createAsyncThunk(`${moduleName}/register`, async (data, { rejectWithValue }) => {
     try {
         // call Api

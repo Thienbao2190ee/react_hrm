@@ -53,7 +53,7 @@ function CheckCode() {
       });
 
       if (status) {
-        navigate("/home");
+        navigate("/hrm");
       }
     }
   }

@@ -8,7 +8,8 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(async (config) => {
-    const access_token = getCookie("access_token")
+    const access_token = getCookie("userInfo")
+    console.log('userInfo',access_token);
     config.headers.Authorization = `Bearer ${access_token}`;
     return config;
 });
