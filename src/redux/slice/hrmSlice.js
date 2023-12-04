@@ -53,6 +53,32 @@ export const registerAction = createAsyncThunk(
   }
 );
 
+export const getByIdAction = createAsyncThunk(
+    `${moduleName}/getById`,
+    async (id, { rejectWithValue }) => {
+      try {
+        // call Api
+        const response = await hrmAPi.register(id);
+        const res = response.data;
+        if (res.result) {
+          const results = {
+            msg: res?.msg,
+            data: res?.newData,
+          };
+          return results;
+        } else {
+          return rejectWithValue(res?.error[0]);
+        }
+      } catch (error) {
+        if (!error.response) {
+          throw error;
+        }
+        return rejectWithValue(error?.response?.data);
+      }
+    }
+  );
+
+
 export const deleteAction = createAsyncThunk(
     `${moduleName}/delete`,
     async (id, { rejectWithValue }) => {
