@@ -5,11 +5,13 @@ import { Calendar } from "react-date-range";
 
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import * as Yup from 'yup';
+import { getAllAction as getCityAction, selectCity} from "../../redux/slice/citySlice";
+import { getAllAction as getDistrictsAction, selectDistricts } from "../../redux/slice/districtsSlice";
+import { getAllAction as getWardsAction,selectWards } from "../../redux/slice/wardsSlice";
 import { selectHrm } from "../../redux/slice/hrmSlice";
-import { toast } from "react-toastify";
 const formSchema = Yup.object({
     name: Yup.string().required("Dữ liệu bắt buộc"),
     phone: Yup.string().required("Dữ liệu bắt buộc"),
@@ -17,19 +19,7 @@ const formSchema = Yup.object({
     hometown: Yup.string().required("Dữ liệu bắt buộc"),
   });
 
-function Form({ handleRemove,handleAdd }) {
-  const [dateBirth, setDateBirth] = useState(new Date().getTime());
-  const [isDate, setIsDate] = useState(false);
-  const [genderID, setGenderID] = useState({ value: 0, label: "Nam" }); 
-
-
-
-
-  const dataGender = [
-    { value: 0, label: "Nam" },
-    { value: 1, label: "Nữ" },
-  ];
-
+function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -40,29 +30,115 @@ function Form({ handleRemove,handleAdd }) {
     },
     validationSchema: formSchema,
   });
+  const [dateBirth, setDateBirth] = useState(new Date().getTime());
+  const [isDate, setIsDate] = useState(false);
+  const [genderID, setGenderID] = useState({ value: 0, label: "Nam" }); 
+  const [dataCity,setDataCity] = useState(null)
+  const [dataDistricts,setDataDistricts] = useState(null)
+  const [dataWards,setDataWards] = useState(null)
+  const [cityID,setCityID] = useState(null)
+  const [districtsID,setDistrictsID] = useState(null)
+  const [wardsID,setWardID] = useState(null)
+  const [errCityID,setErrCityID] = useState(null)
+  const [errDistrictsID,setErrDistrictsID] = useState(null)
+  const [errWardsID,setErrWardsID] = useState(null)
+  const dispatch = useDispatch()
+  const {dataUpdate} = useSelector(selectHrm)
+  useEffect(() => {
+    if(dataUpdate){
+      if(dataUpdate?.length > 0 ){
+        const data = dataUpdate[0]
+        formik.setFieldValue('name',data?.name)
+        formik.setFieldValue('hometown',data?.address)
+        formik.setFieldValue('email',data?.email)
+        formik.setFieldValue('phone',data?.phone)
+        setCityID({value:data?.cityID,label : data?.cityName})
+        setDistrictsID({value:data?.districtID,label : data?.districtName})
+        setWardID({value:data?.wardID,label : data?.wardName})
+      }
+    }
+  },[dataUpdate])
+
+  const {data : city} = useSelector(selectCity)
+  const {data : districts} = useSelector(selectDistricts)
+  const {data : wards} = useSelector(selectWards)
+  const formatSelect = (data) => {
+    if(data){
+      const newData = data?.map((item) => ({ value: item.id, label: item.full_name }));
+      return newData;
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getCityAction())
+  },[])
+
+  useEffect(() => {
+    const newData = formatSelect(city)
+    setDataCity(newData)
+  },[city])
+
+  useEffect( () => {
+    if(cityID){
+      const newData = formatSelect(districts)
+      setDataDistricts(newData)
+    }
+  },[districts])
+
+  useEffect( () => {
+    if(districtsID){
+      const newData = formatSelect(wards)
+      setDataWards(newData)
+    }
+  },[wards])
+
+
+
+  const dataGender = [
+    { value: 0, label: "Nam" },
+    { value: 1, label: "Nữ" },
+  ];
+
+  
 
   const handleSelectDate = (e) => {
     setDateBirth(new Date(e).getTime());
     setIsDate(false);
   };
 
-  const clickAdd = async () => {
+  const clickSave = async () => {
     const action = await formik.validateForm()
+    if(!cityID){
+      setErrCityID('Dữ liệu bắt buộc')
+    }
+    if(!districtsID){
+      setErrDistrictsID('Dữ liệu bắt buộc')
+    }
+    if(!wardsID){
+      setErrWardsID('Dữ liệu bắt buộc')
+    }
     if(Object.keys(action).length === 0){
         const data = {
             name : formik.values.name,
             email : formik.values.email,
             phone : formik.values.phone,
-            hometown : formik.values.hometown,
+            address : formik.values.hometown,
             gender: genderID.value,
-            birth:dateBirth
+            birth:dateBirth,
+            cityID:cityID.value,
+            districtID:districtsID.value,
+            wardID:wardsID.value,
         }
-        handleAdd(data)
+        if (isUpdate) {
+          handleUpdate(dataUpdate[0]?.id,data)
+        } else {
+          handleAdd(data)
+        }
         
     }
   }
   return (
-    <div className="w-[25%] absolute h-screen top-0 bg-white right-0 shadow-2xl">
+    <div className="w-[25%] fixed h-screen top-0 bg-white right-0 shadow-2xl overflow-y-scroll">
       <div className="p-2 border-b flex justify-end">
         <button
           type="button"
@@ -167,6 +243,71 @@ function Form({ handleRemove,handleAdd }) {
             options={dataGender}
           />
         </div>
+        <div className="relative mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-500">
+          Tỉnh thành
+          </label>
+
+          <Select
+            value={cityID}
+            placeholder="Chọn tỉnh thành"
+            onChange={(e) => {
+              setErrCityID(null)
+              setDistrictsID(null)
+              setWardID(null)
+              formik.setFieldValue('hometown','')
+              setCityID(e)
+              dispatch(getDistrictsAction({cityid : e?.value}))
+            }}
+            options={dataCity}
+          />
+          <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+            {errCityID}
+          </p>
+        </div>
+        <div className="relative mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-500">
+            Quận/huyện
+          </label>
+
+          <Select
+            value={districtsID}
+            isDisabled={!cityID ? true : false}
+            onChange={(e) => {
+              setErrDistrictsID(null)
+              setWardID(null)
+              formik.setFieldValue('hometown','')
+              setDistrictsID(e)
+              dispatch(getWardsAction({districtsid : e?.value}))
+            }}
+            options={dataDistricts}
+          />
+          <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+            {errDistrictsID}
+          </p>
+        </div>
+        <div className="relative mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-500">
+            Xã/phường
+          </label>
+
+          <Select
+            value={wardsID}
+            // disabled={false}
+            isDisabled={!districtsID ? true : false}
+            onChange={(e) => {
+              setErrWardsID(null)
+              formik.setFieldValue('hometown','')
+              setWardID(e)
+              
+            }}
+            options={dataWards}
+          />
+          <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+            {errWardsID}
+          </p>
+        </div>
+        
         <div>
           <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-500">
             Địa chỉ
@@ -196,7 +337,7 @@ function Form({ handleRemove,handleAdd }) {
         <button
           className="middle none center mr-4 rounded-lg bg-green-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           data-ripple-light="true"
-          onClick={clickAdd}
+          onClick={clickSave}
           disabled={!formik.isValid}
         >
           Thêm

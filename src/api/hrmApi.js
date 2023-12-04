@@ -12,11 +12,11 @@ const hrmAPi = {
         return axiosClient.post(url,data)
     },
     getbyid : (id) => {
-        const url = `/${module}/updatebyid/${id}`
-        return axiosClient.put(url)
+        const url = `/${module}/getbyid/${id}`
+        return axiosClient.get(url)
     },
-    updatebyid : (data) => {
-        const url = `/${module}/updatebyid`
+    updatebyid : (id,data) => {
+        const url = `/${module}/updatebyid/${id}`
         return axiosClient.put(url,data)
     },
     delete : (id) => {

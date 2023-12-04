@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAction, getAllAction, registerAction, selectHrm } from "../../redux/slice/hrmSlice";
+import { UpdateByIdAction, deleteAction, getAllAction, getByIdAction, registerAction, selectHrm } from "../../redux/slice/hrmSlice";
 import { format } from "date-fns";
 import ListItem from "./listItem";
 import Form from "./Form";
@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 function Hrm() {
   const [isForm,setIsform] = useState(false)
+  const [isUpdate,setIsUpdate] = useState(false)
   const dispatch = useDispatch();
   const params = {
     keyword: "",
@@ -27,6 +28,7 @@ function Hrm() {
   }, [data]);
 
   const handleAdd = async (data) => {
+    
     const action = await dispatch(registerAction(data))
 
       const status = registerAction.fulfilled.match(action);
@@ -62,10 +64,39 @@ function Hrm() {
         theme: "light",
       });
   }
+  const openFormUpdate = (id) => {
+    setIsUpdate(true)
+    dispatch(getByIdAction(id))
+    setIsform(true)
+  } 
+  const handleCloseForm = () => {
+    setIsUpdate(false)
+    setIsform(false)
+  }
+
+  const handleUpdate = async (id,data) => {
+    const action = await dispatch(UpdateByIdAction({id,data}))
+
+    const status = UpdateByIdAction.fulfilled.match(action);
+    
+    toast[status ? "success" : "error"](action.payload.msg, {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    if(status){
+      setIsform(false)
+    }
+  }
 
   return (
     <>
-      {isForm && <Form handleAdd={handleAdd} handleRemove={() => setIsform(false)}/>}
+      {isForm && <Form isUpdate={isUpdate} handleAdd={handleAdd} handleUpdate={handleUpdate}  handleRemove={handleCloseForm}/>}
       <div className="w-full h-20 bg-red-200 ">
         <div className="px-5 pt-5 flex justify-between">
           <button
@@ -187,7 +218,7 @@ function Hrm() {
                         Đang tải
                         </div>
                       ) : data.length > 0 ? (
-                          <ListItem clickUpdate clickRemove={handleRemove} data={data}/>
+                          <ListItem clickUpdate={openFormUpdate} clickRemove={handleRemove} data={data}/>
                       ) : (
                         <div>
                           Không có dữ liệu

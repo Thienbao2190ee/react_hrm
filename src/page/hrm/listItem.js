@@ -26,7 +26,7 @@ function ListItem({ data,clickRemove,clickUpdate}) {
           </td>
 
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.hometown}
+            {item.address},{item.wardName},{item.districtName},{item.cityName}
           </td>
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
             {item.createdAt && format(new Date(item.createdAt), "dd-MM-yyyy")}
@@ -42,13 +42,13 @@ function ListItem({ data,clickRemove,clickUpdate}) {
               type="button"
               className="text-white bg-cyan-300 hover:bg-cyan-400 focus:ring-4 focus:outline-none focus:ring-cyan-100 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
             >
-              <i style={{ height: 15 }} class="fi fi-rr-edit"></i>
+              <i style={{ height: 15 }} className="fi fi-rr-edit"></i>
             </button>
             <button
               type="button"
               className="text-white bg-rose-700 hover:bg-rose-800 focus:ring-4 focus:outline-none focus:ring-rose-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-rose-600 dark:hover:bg-rose-700 dark:focus:ring-rose-800"
             >
-              <i style={{ height: 15 }} onClick={() => clickRemove(item.id)} class="fi fi-rr-trash"></i>
+              <i style={{ height: 15 }} onClick={() => clickRemove(item.id)} className="fi fi-rr-trash"></i>
             </button>
           </td>
         </tr>
