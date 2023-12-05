@@ -131,7 +131,7 @@ function Login() {
               </div>
 
               <div className="container-login100-form-btn">
-                <button type="button" onClick={handleRegister} disabled={!formik.isValid} className="login100-form-btn">Đăng ký</button>
+                <button type="button" onClick={handleRegister} disabled={!formik.isValid} className="login100-form-btn">Đăng Nhập</button>
               </div>
 
               <div className="text-center p-t-12">

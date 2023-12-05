@@ -14,6 +14,10 @@ const authAPi = {
     checkCode : (data) => {
         const url = `/${module}/check-code`
         return axiosClient.post(url,data)
+    },
+    getInfo : (id) => {
+        const url = `/${module}/getinfo/${id}`
+        return axiosClient.get(url)
     }
 }
 export default authAPi

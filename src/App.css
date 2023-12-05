@@ -1,38 +1,63 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* 
+.pagination {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+.pagination span {
+  color: #606266;
+  font-size: 13px;
+  margin-right: 10px;
+}
+.pagination select {
+  border: 1px solid #dbe1e5;
+  outline: none;
+  padding: 3px 10px;
+  margin-right: 10px;
+}
+.pagination select:focus {
+  border-color: #830016;
+}
+.pagination select option {
+  font-size: 13px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+.pagination .pagination-item {
+  display: flex;
+  align-items: center;
+}
+.pagination ul {
+  display: flex;
+  margin-bottom: 0;
 }
 
-.App-link {
-  color: #61dafb;
+.pagination .btn-excel {
+  position: relative;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.pagination .btn-excel a {
+  padding: 3px 20px 3px 30px;
+  border: 1px solid #dbe1e5;
+  color: #999;
+  font-size: 14px;
+  display: inline-block;
+  text-decoration: none;
 }
+.pagination .btn-excel a:hover {
+  border-color: #830016;
+  color: #830016;
+}
+.pagination .btn-excel a::before {
+  content: ' ';
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: -167px -3px;
+  position: absolute;
+  left: 15px;
+  top: 5px;
+} */

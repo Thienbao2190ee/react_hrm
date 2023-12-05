@@ -4,12 +4,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./compoment/Layout";
 // import Home from "./page/Home";
 import Login from "./page/Login";
+import './App.css'
 
 import CheckCode from "./page/CheckCode";
 import Register from "./page/Register";
 import { useEffect, useState } from "react";
 import PrivateProtectedRoute from "./until/ProtectedRoutes/PrivateProtectedRoutes";
 import Hrm from "./page/hrm/Hrm";
+
 
 function App() {
   const [token, setToken] = useState(null);

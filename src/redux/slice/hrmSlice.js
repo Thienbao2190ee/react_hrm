@@ -8,12 +8,13 @@ export const getAllAction = createAsyncThunk(
   async (params, { rejectWithValue }) => {
     try {
       // call Api
-      const response = await hrmAPi.getAll(params);
+      const response = await hrmAPi.getAll({params:params});
       const res = response.data;
       console.log("res", res);
       if (res.result) {
         const results = {
           data: res.newData,
+          totalPage:res.totalPage
         };
         return results;
       } else {
@@ -128,12 +129,25 @@ export const deleteAction = createAsyncThunk(
   }
 );
 
+export const clearData = createAsyncThunk('clear', async (data) => {
+  return data
+})
+
 const hrmSlices = createSlice({
   name: "hrm",
   initialState: {
     data: [],
+    totalPage:''
   },
   extraReducers: (builder) => {
+    builder
+      
+      .addCase(clearData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appError = undefined;
+        state.serverError = undefined;
+      })
+      
     //get all
     builder
       .addCase(getAllAction.pending, (state) => {
@@ -144,6 +158,7 @@ const hrmSlices = createSlice({
       .addCase(getAllAction.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
+        state.totalPage = action.payload.totalPage
         state.appError = undefined;
         state.serverError = undefined;
       })
@@ -163,8 +178,12 @@ const hrmSlices = createSlice({
           (row) => parseInt(row.id) === parseInt(action?.payload?.id)
         );
         if (checkIndex >= 0) {
+          const createdAt = state.data[checkIndex].createdAt
           state.data[checkIndex] = action?.payload?.data[0];
+          state.data[checkIndex].createdAt = createdAt
+
         }
+
         state.appError = undefined;
         state.serverError = undefined;
       })
@@ -179,7 +198,7 @@ const hrmSlices = createSlice({
         state.serverError = undefined;
       })
       .addCase(registerAction.fulfilled, (state, action) => {
-        state.data = [...action.payload?.data, ...state.data];
+        // state.data = [...action.payload?.data, ...state.data];
         state.appError = undefined;
         state.serverError = undefined;
       })
@@ -210,9 +229,9 @@ const hrmSlices = createSlice({
         state.serverError = undefined;
       })
       .addCase(deleteAction.fulfilled, (state, action) => {
-        state.data = state.data.filter(
-          (arrow) => arrow.id !== action.payload.id
-        );
+        // state.data = state.data.filter(
+        //   (arrow) => arrow.id !== action.payload.id
+        // );
         state.appError = undefined;
         state.serverError = undefined;
       })

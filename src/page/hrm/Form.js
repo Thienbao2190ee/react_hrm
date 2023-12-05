@@ -30,7 +30,10 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
     },
     validationSchema: formSchema,
   });
-  const [dateBirth, setDateBirth] = useState(new Date().getTime());
+  const maxDate = new Date(new Date());
+  maxDate.setFullYear(new Date().getFullYear() - 17)
+  console.log(maxDate);
+  const [dateBirth, setDateBirth] = useState(maxDate.getTime());
   const [isDate, setIsDate] = useState(false);
   const [genderID, setGenderID] = useState({ value: 0, label: "Nam" }); 
   const [dataCity,setDataCity] = useState(null)
@@ -42,10 +45,13 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
   const [errCityID,setErrCityID] = useState(null)
   const [errDistrictsID,setErrDistrictsID] = useState(null)
   const [errWardsID,setErrWardsID] = useState(null)
+  const [errEmail,setErrEmail] = useState(null)
+  const [errPhone,setErrPhone] = useState(null)
+  
   const dispatch = useDispatch()
-  const {dataUpdate} = useSelector(selectHrm)
+  const {dataUpdate,appError} = useSelector(selectHrm)
   useEffect(() => {
-    if(dataUpdate){
+    if(dataUpdate && isUpdate){
       if(dataUpdate?.length > 0 ){
         const data = dataUpdate[0]
         formik.setFieldValue('name',data?.name)
@@ -55,6 +61,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
         setCityID({value:data?.cityID,label : data?.cityName})
         setDistrictsID({value:data?.districtID,label : data?.districtName})
         setWardID({value:data?.wardID,label : data?.wardName})
+        setGenderID({value:data.gender,label : data.gender == 0 ? 'Nam' : 'Nữ' })
       }
     }
   },[dataUpdate])
@@ -68,7 +75,16 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
       return newData;
     }
   };
-
+  useEffect(() => {
+    if(appError){
+      if(appError.param === 'email'){
+        setErrEmail(appError.msg)
+      }
+      if(appError.param === 'phone'){
+        setErrPhone(appError.msg);
+      }
+    }
+  },[appError])
   useEffect(() => {
     dispatch(getCityAction())
   },[])
@@ -92,6 +108,15 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
     }
   },[wards])
 
+  useEffect(() => {
+    if(errEmail){
+      setErrEmail(null)
+    }
+    if(errPhone){
+      setErrPhone(null)
+    }
+  },[formik.values.email,formik.values.phone])
+
 
 
   const dataGender = [
@@ -109,13 +134,13 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
   const clickSave = async () => {
     const action = await formik.validateForm()
     if(!cityID){
-      setErrCityID('Dữ liệu bắt buộc')
+      return setErrCityID('Dữ liệu bắt buộc')
     }
     if(!districtsID){
-      setErrDistrictsID('Dữ liệu bắt buộc')
+      return setErrDistrictsID('Dữ liệu bắt buộc')
     }
     if(!wardsID){
-      setErrWardsID('Dữ liệu bắt buộc')
+      return setErrWardsID('Dữ liệu bắt buộc')
     }
     if(Object.keys(action).length === 0){
         const data = {
@@ -123,11 +148,11 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
             email : formik.values.email,
             phone : formik.values.phone,
             address : formik.values.hometown,
-            gender: genderID.value,
+            gender: genderID?.value,
             birth:dateBirth,
-            cityID:cityID.value,
-            districtID:districtsID.value,
-            wardID:wardsID.value,
+            cityID:cityID?.value,
+            districtID:districtsID?.value,
+            wardID:wardsID?.value,
         }
         if (isUpdate) {
           handleUpdate(dataUpdate[0]?.id,data)
@@ -138,7 +163,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
     }
   }
   return (
-    <div className="w-[25%] fixed h-screen top-0 bg-white right-0 shadow-2xl overflow-y-scroll">
+    <div className="w-[25%] fixed h-screen top-0 z-10 bg-white right-0 shadow-2xl overflow-y-scroll">
       <div className="p-2 border-b flex justify-end">
         <button
           type="button"
@@ -180,7 +205,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
             placeholder="Nhập..."
           />
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-          {formik.errors.email}
+          {formik.errors.email || errEmail}
           </p>
         </div>
 
@@ -198,7 +223,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
             placeholder="Nhập..."
           />
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-          {formik.errors.phone}
+          {formik.errors.phone || errPhone}
           </p>
         </div>
 
@@ -223,7 +248,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
           </p>
           {isDate && (
             <Calendar
-              maxDate={new Date()}
+              maxDate={maxDate}
               date={dateBirth}
               onChange={handleSelectDate}
             />
@@ -255,7 +280,6 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
               setErrCityID(null)
               setDistrictsID(null)
               setWardID(null)
-              formik.setFieldValue('hometown','')
               setCityID(e)
               dispatch(getDistrictsAction({cityid : e?.value}))
             }}
@@ -276,7 +300,6 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
             onChange={(e) => {
               setErrDistrictsID(null)
               setWardID(null)
-              formik.setFieldValue('hometown','')
               setDistrictsID(e)
               dispatch(getWardsAction({districtsid : e?.value}))
             }}
@@ -297,7 +320,6 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
             isDisabled={!districtsID ? true : false}
             onChange={(e) => {
               setErrWardsID(null)
-              formik.setFieldValue('hometown','')
               setWardID(e)
               
             }}
@@ -340,7 +362,7 @@ function Form({ handleRemove,handleAdd,isUpdate,handleUpdate }) {
           onClick={clickSave}
           disabled={!formik.isValid}
         >
-          Thêm
+          {isUpdate ? 'Cập nhật' : "Thêm"}
         </button>
       </div>
     </div>

@@ -1,14 +1,39 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
-import { logoutAction } from "../redux/slice/authSlice";
+import { getInfoAction, logoutAction, selectAuth } from "../redux/slice/authSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect, useState } from "react";
+// import jwt from 'jsonwebtoken'
+import { getCookie } from "../until/getCookie";
+import { jwtDecode } from "jwt-decode";
 function Layout() {
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logoutAction());
     window.location.reload();
   };
+  const [name ,setName] = useState(null)
+  useEffect(() => {
+    const access_token = getCookie("userInfo")
+    console.log(access_token);
+    if (access_token) {
+      try {
+        const decoded = jwtDecode(access_token);
+        // Use the decoded token as needed
+        console.log(decoded);
+        setName(decoded.fullName)
+
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+    
+  },[])
+  // useEffect(() => {
+  //   dispatch(getInfoAction(id))
+  // },[])
+  
   return (
     <>
     <ToastContainer
@@ -53,6 +78,15 @@ function Layout() {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
+          {/* <li>
+              <a
+                href="#"
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
+                <i class="fi fi-sr-user"></i>
+                <span className="ms-3">{name}</span>
+              </a>
+            </li> */}
             <li>
               <a
                 href="#"

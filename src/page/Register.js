@@ -8,8 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { regexEmail } from "../until/regex";
-import { useDispatch } from "react-redux";
-import { registerAction } from "../redux/slice/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { registerAction,selectAuth } from "../redux/slice/authSlice";
 
 const formSchema = Yup.object({
   fullName: Yup.string().required("Dữ liệu bắt buộc"),
@@ -31,6 +31,7 @@ function Register() {
   });
 
   const navigate = useNavigate();
+  const {loading} = useSelector(selectAuth)
 
   const dispatch = useDispatch();
   const handleRegister = async () => {
@@ -189,6 +190,16 @@ function Register() {
               </div>
 
               <div className="container-login100-form-btn">
+              {loading ? 
+              (
+                <button
+                  type="button"
+                  disabled
+                  className="login100-form-btn"
+                >
+                  Đang đăng ký...
+                </button>
+              ) : (
                 <button
                   type="button"
                   onClick={handleRegister}
@@ -197,6 +208,8 @@ function Register() {
                 >
                   Đăng ký
                 </button>
+              )}
+
               </div>
 
               <div className="text-center p-t-12">
