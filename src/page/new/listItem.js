@@ -1,6 +1,11 @@
 import { format } from "date-fns";
+import { urlNew, urlThumbNew } from "../../config/url";
+import { UpdateActiveAction, UpdateByIdAction } from "../../redux/slice/newSlice";
+import { useDispatch } from "react-redux";
 
 function ListItem({ data,clickRemove,clickUpdate}) {
+
+  const dispatch = useDispatch()
   return (
     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
       {data.map((item, index) => (
@@ -10,37 +15,35 @@ function ListItem({ data,clickRemove,clickUpdate}) {
           </td>
 
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.name}
+            {item.title}
           </td>
 
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.email}
+            {item.des}
           </td>
 
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.phone}
-          </td>
-            <td className="px-4 py-4 text-sm text-center text-gray-500 dark:text-gray-300 whitespace-nowrap">
-          {item.gender == 0 ? (
-              <div className="bg-sky-300  py-0.5 px-3 rounded-xl text-white">
-                Nam
-
-              </div>
-          ) : (
-            <div className="bg-rose-300 py-0.5 px-3 rounded-xl text-white">
-
-              Nữ
-            </div>
-          ) }
-            </td>
-
-          <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.birth && format(new Date(item.birth), "dd-MM-yyyy")}
+            <img className="w-10 h-10 object-cover rounded-lg shadow-lg" src={urlThumbNew+item.image} />
           </td>
 
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-            {item.address},{item.wardName},{item.districtName},{item.cityName}
+            
+
+            <div className="flex items-center rounded-xl mb-4">
+          <input
+            id="default-checkbox"
+            type="checkbox"
+            value=""
+            className="w-4 h-4 text-blue-600 bg-gray-100 rounded-xl border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            checked={Number(item.active)}
+            onChange={(e) => {
+              dispatch(UpdateActiveAction({id : item.id , data : {active : e.target.checked ? 1 : 0 }}))
+            }}
+          />
+          
+        </div>
           </td>
+
           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
             {item.createdAt && format(new Date(item.createdAt), "dd-MM-yyyy")}
           </td>

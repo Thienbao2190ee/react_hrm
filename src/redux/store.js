@@ -4,6 +4,7 @@ import cityReduce from './slice/citySlice'
 import hrmReduce from './slice/hrmSlice'
 import districtsReduce from './slice/districtsSlice'
 import wardsReduce from './slice/wardsSlice'
+import newReduce from './slice/newSlice'
 
 
 export default configureStore({
@@ -13,5 +14,6 @@ export default configureStore({
     city : cityReduce,
     districts : districtsReduce,
     wards : wardsReduce,
+    new : newReduce,
   },
 })

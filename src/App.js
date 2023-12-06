@@ -11,6 +11,8 @@ import Register from "./page/Register";
 import { useEffect, useState } from "react";
 import PrivateProtectedRoute from "./until/ProtectedRoutes/PrivateProtectedRoutes";
 import Hrm from "./page/hrm/Hrm";
+import 'react-tooltip/dist/react-tooltip.css'
+import New from "./page/new";
 
 
 function App() {
@@ -43,6 +45,7 @@ function App() {
           <Route element={<PrivateProtectedRoute />} >
             <Route path="/" element={<Layout />}>
               <Route index path="/Hrm" element={<Hrm />} />
+              <Route index path="/new" element={<New />} />
               
             </Route>
           </Route>

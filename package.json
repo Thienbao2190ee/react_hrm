@@ -21,6 +21,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
     "react-toastify": "^9.1.3",
+    "react-tooltip": "^5.25.0",
     "sweetalert2": "^11.10.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.3.2"
